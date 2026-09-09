@@ -1,13 +1,13 @@
 import { SUPPORT_EMAIL } from "@/data/site";
-
-export type Enquiry = { name: string; email: string; msg: string };
+import { formatEnquiry, type Enquiry } from "@/lib/contact";
 
 /**
- * Builds the `mailto:` URL the contact form hands to the visitor's mail client.
- * Kept separate from the component so the exact URL can be asserted in tests.
+ * Builds a prefilled `mailto:` URL. Used only as a fallback when the contact
+ * API cannot be reached, so the visitor never loses what they typed.
  */
-export function buildEnquiryMailto({ name, email, msg }: Enquiry): string {
-  const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${msg}`);
-  const subject = encodeURIComponent(`Website enquiry from ${name}`);
-  return `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`;
+export function buildEnquiryMailto(enquiry: Enquiry): string {
+  const { subject, text } = formatEnquiry(enquiry);
+  return `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(
+    subject,
+  )}&body=${encodeURIComponent(text)}`;
 }

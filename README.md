@@ -16,16 +16,43 @@ npm run dev      # http://localhost:3000
 | Script              | What it does                                       |
 | ------------------- | -------------------------------------------------- |
 | `npm run dev`       | Development server with hot reload                  |
-| `npm run build`     | Static export to `out/`                             |
+| `npm run build`     | Production build                                    |
+| `npm run start`     | Serve the production build                          |
 | `npm run test`      | Unit tests (Vitest)                                 |
 | `npm run typecheck` | TypeScript, no emit                                 |
 | `npm run lint`      | ESLint                                              |
 
+## Contact form
+
+The form posts to `/api/contact`, which sends the enquiry to the support inbox
+through [Resend](https://resend.com). Replying to that mail answers the visitor
+directly, because their address is set as the reply-to.
+
+Three environment variables drive it. Copy `.env.example` to `.env.local` for
+development, and set the same three on the host:
+
+| Variable             | Purpose                                              |
+| -------------------- | ---------------------------------------------------- |
+| `RESEND_API_KEY`     | From <https://resend.com/api-keys>                    |
+| `CONTACT_TO_EMAIL`   | Where enquiries land. Defaults to Support@cloudbird.in |
+| `CONTACT_FROM_EMAIL` | Who they come from. Must be a Resend-verified domain  |
+
+**One-time setup.** Create a Resend account, add `cloudbird.in` under
+<https://resend.com/domains>, and add the DNS records it gives you. Until that
+domain is verified, set `CONTACT_FROM_EMAIL` to
+`Cloud Bird India <onboarding@resend.dev>`, which works immediately but only
+delivers to the Resend account owner's own address.
+
+Without `RESEND_API_KEY` the route answers 500 and the form shows a fallback
+link that opens a prefilled mail draft, so a visitor never loses what they
+typed. A hidden honeypot field silently drops bot submissions.
+
 ## Deploying
 
-`npm run build` writes a fully static site to `out/`. Upload that folder to any
-static host — Nginx, Netlify, Vercel, S3 + CloudFront. There is no server
-runtime and no environment variables to set.
+The site is no longer a static export, because `/api/contact` runs on request.
+It needs a Node runtime: Vercel or Netlify handle it with no configuration, or
+run `npm run build && npm run start` behind Nginx. Set the three environment
+variables above on the host before going live.
 
 ## Project layout
 
@@ -46,7 +73,9 @@ src/
   i18n/
     translations.ts   Every string in English, Nepali and Russian
     LanguageProvider.tsx
-  lib/mailto.ts       Builds the contact form's mailto: URL
+  lib/contact.ts      Enquiry validation, shared by the form and the API route
+  lib/mailto.ts       Prefilled mail draft, used only when the API is down
+  app/api/contact/    The route that sends the enquiry through Resend
 tests/                Unit tests for the data and the mailto builder
 public/logos/         24 client and brand logos as PNG files
 ```
@@ -81,6 +110,9 @@ Nothing visible, and nothing functional. The structural differences:
   covering anchor targets, and a message when the contact form is submitted
   empty. All of it respects `prefers-reduced-motion`, and none of it moves an
   element.
+- **The contact form actually sends.** The original built a `mailto:` link,
+  which handed off to whatever mail app the visitor's device was set to. It now
+  posts to a route that emails the support inbox directly.
 - **The site always opens in English.** The original remembered a visitor's
   language choice in `localStorage` under `cb_lang`, so anyone who tried
   Russian once was greeted in Russian on every later visit. The switcher now
