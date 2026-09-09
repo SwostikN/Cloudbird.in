@@ -37,11 +37,21 @@ development, and set the same three on the host:
 | `CONTACT_TO_EMAIL`   | Where enquiries land. Defaults to Support@cloudbird.in |
 | `CONTACT_FROM_EMAIL` | Who they come from. Must be a Resend-verified domain  |
 
-**One-time setup.** Create a Resend account, add `cloudbird.in` under
-<https://resend.com/domains>, and add the DNS records it gives you. Until that
-domain is verified, set `CONTACT_FROM_EMAIL` to
-`Cloud Bird India <onboarding@resend.dev>`, which works immediately but only
-delivers to the Resend account owner's own address.
+**One-time setup.** The sending domain registered in Resend is
+`cloudbirdindia.com`. Publish the three DNS records that
+<https://resend.com/domains> lists for it — a DKIM `TXT` on
+`resend._domainkey`, and an `MX` plus `TXT` on the `send` subdomain — then press
+Verify. Nothing sends until all three go green.
+
+Note the two domains are different on purpose. Mail is sent from
+`cloudbirdindia.com` and delivered to `Support@cloudbird.in`, which is a
+Microsoft 365 inbox. Resend puts its SPF record on a `send` subdomain, so
+adding it never disturbs the mail already running on the main domain.
+
+Before the domain verifies you can set `CONTACT_FROM_EMAIL` to
+`Cloud Bird India <onboarding@resend.dev>`. That works immediately but only
+delivers to the Resend account owner's own address, so it is for smoke-testing
+rather than for going live.
 
 Without `RESEND_API_KEY` the route answers 500 and the form shows a fallback
 link that opens a prefilled mail draft, so a visitor never loses what they
