@@ -262,9 +262,16 @@ html[data-reveal-ready] [data-reveal][data-revealed="true"]{opacity:1;transform:
   .loc-grid{grid-template-columns:1fr}
 }
 
-/* Contact form validation message. */
-.form-err{margin:-4px 0 14px;color:#c0392b;font-size:13.5px;font-weight:500}
+/* Contact form status messages. */
+.form-msg{margin:-4px 0 14px;font-size:13.5px;font-weight:500;line-height:1.5}
+.form-err{color:#c0392b}
+.form-err a{text-decoration:underline}
+.form-ok{color:var(--ok)}
 .form input[aria-invalid="true"],.form textarea[aria-invalid="true"]{border-color:#e0a0a0;background:#fffaf9}
+.form .btn[disabled]{opacity:.65;cursor:progress;transform:none;box-shadow:0 8px 20px rgba(31,122,224,.32)}
+
+/* Honeypot: off-screen for people, still in the DOM for bots to fill in. */
+.form .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}

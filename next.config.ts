@@ -1,11 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Fully static site: `npm run build` emits a self-contained `out/` folder
-  // that any static host (Nginx, Netlify, Vercel, S3) can serve as-is.
-  output: "export",
-  images: { unoptimized: true },
-  trailingSlash: true,
+  // Not a static export: /api/contact runs on request to send the enquiry
+  // through Resend, so the app needs a Node runtime (Vercel, Netlify, or
+  // `next start` behind a reverse proxy). `trailingSlash` is deliberately
+  // left off — it answered POSTs to /api/contact with a 308 redirect.
 };
 
 export default nextConfig;

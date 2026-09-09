@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { HEAD_OFFICE, SUPPORT_EMAIL } from "@/data/site";
 import { useT } from "@/i18n/LanguageProvider";
+import { parseEnquiry, type Enquiry } from "@/lib/contact";
 import { buildEnquiryMailto } from "@/lib/mailto";
 
 function MailIcon() {
@@ -32,25 +33,62 @@ function GlobeIcon() {
   );
 }
 
+type Status =
+  | { state: "idle" }
+  | { state: "invalid"; messageKey: "f_required" | "f_bad_email" }
+  | { state: "sending" }
+  | { state: "sent" }
+  | { state: "failed"; enquiry: Enquiry };
+
 export default function Contact() {
   const t = useT();
-  const [invalid, setInvalid] = useState(false);
+  const [status, setStatus] = useState<Status>({ state: "idle" });
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const invalid = status.state === "invalid";
+  const sending = status.state === "sending";
+
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form = e.currentTarget;
-    const data = new FormData(form);
-    const name = String(data.get("name") ?? "").trim();
-    const email = String(data.get("email") ?? "").trim();
-    const msg = String(data.get("msg") ?? "").trim();
+    if (sending) return;
 
-    if (!name || !email || !msg) {
-      setInvalid(true);
+    const form = e.currentTarget;
+    const data = Object.fromEntries(new FormData(form));
+    const parsed = parseEnquiry(data);
+
+    if (!parsed.ok) {
+      // The honeypot is invisible, so a person can never trip it.
+      if (parsed.reason === "spam") {
+        setStatus({ state: "sent" });
+        form.reset();
+        return;
+      }
+      setStatus({
+        state: "invalid",
+        messageKey: parsed.reason === "email" ? "f_bad_email" : "f_required",
+      });
       return;
     }
-    setInvalid(false);
 
-    window.location.href = buildEnquiryMailto({ name, email, msg });
+    setStatus({ state: "sending" });
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(parsed.enquiry),
+      });
+      if (!res.ok) throw new Error(`Contact API responded ${res.status}`);
+      setStatus({ state: "sent" });
+      form.reset();
+    } catch (cause) {
+      console.error(cause);
+      // Hand back a prefilled mail draft so the message typed is not lost.
+      setStatus({ state: "failed", enquiry: parsed.enquiry });
+    }
+  };
+
+  const clearInvalid = () => {
+    if (invalid) setStatus({ state: "idle" });
   };
 
   return (
@@ -112,7 +150,7 @@ export default function Contact() {
                 required
                 autoComplete="name"
                 aria-invalid={invalid || undefined}
-                onChange={() => invalid && setInvalid(false)}
+                onChange={clearInvalid}
               />
             </div>
             <div className="fld">
@@ -124,7 +162,7 @@ export default function Contact() {
                 required
                 autoComplete="email"
                 aria-invalid={invalid || undefined}
-                onChange={() => invalid && setInvalid(false)}
+                onChange={clearInvalid}
               />
             </div>
             <div className="fld">
@@ -134,20 +172,42 @@ export default function Contact() {
                 name="msg"
                 required
                 aria-invalid={invalid || undefined}
-                onChange={() => invalid && setInvalid(false)}
+                onChange={clearInvalid}
               />
             </div>
 
-            <p className="form-err" role="alert" hidden={!invalid}>
-              {t("f_required")}
+            {/* Invisible to people, irresistible to bots. */}
+            <input
+              type="text"
+              name="company"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="hp"
+            />
+
+            <p className="form-msg form-err" role="alert" hidden={!invalid}>
+              {invalid ? t(status.messageKey) : ""}
             </p>
+
+            <p className="form-msg form-ok" role="status" hidden={status.state !== "sent"}>
+              {t("f_sent")}
+            </p>
+
+            {status.state === "failed" && (
+              <p className="form-msg form-err" role="alert">
+                {t("f_failed")}{" "}
+                <a href={buildEnquiryMailto(status.enquiry)}>{SUPPORT_EMAIL}</a>
+              </p>
+            )}
 
             <button
               type="submit"
               className="btn btn-primary"
               style={{ width: "100%", justifyContent: "center" }}
+              disabled={sending}
             >
-              {t("f_send")}
+              {sending ? t("f_sending") : t("f_send")}
             </button>
           </form>
         </div>
