@@ -87,7 +87,7 @@ src/
   lib/mailto.ts       Prefilled mail draft, used only when the API is down
   app/api/contact/    The route that sends the enquiry through Resend
 tests/                Unit tests for the data and the mailto builder
-public/logos/         24 client and brand logos as PNG files
+public/logos/         30 client logos plus the brand mark, as PNG files
 ```
 
 ## Common edits
@@ -95,7 +95,7 @@ public/logos/         24 client and brand logos as PNG files
 **Add a client.** Drop the logo in `public/logos/` named `<key>.png`, then add a
 `{ name, key, url }` entry to `CUSTOMERS` in `src/data/customers.ts`. The grid
 grows on its own. Leave `url` empty for a client with no site — the tile renders
-unlinked, exactly as `octaq` and `techenable` do today.
+unlinked, exactly as `octaq` and `brainscape` do today.
 
 **Change wording.** Every visible string lives in `src/i18n/translations.ts`.
 Edit all three language blocks; a unit test fails if the keys drift apart.
