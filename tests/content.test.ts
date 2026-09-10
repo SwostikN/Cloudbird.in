@@ -23,12 +23,12 @@ describe("translations", () => {
 });
 
 describe("content data", () => {
-  it("carries the original 23 customers, 21 of them linked", () => {
-    expect(CUSTOMERS).toHaveLength(23);
-    expect(CUSTOMERS.filter((c) => c.url)).toHaveLength(21);
+  it("carries all 30 customers, 28 of them linked", () => {
+    expect(CUSTOMERS).toHaveLength(30);
+    expect(CUSTOMERS.filter((c) => c.url)).toHaveLength(28);
     expect(CUSTOMERS.filter((c) => !c.url).map((c) => c.key)).toEqual([
       "octaq",
-      "techenable",
+      "brainscape",
     ]);
   });
 
