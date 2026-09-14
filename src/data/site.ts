@@ -1,4 +1,4 @@
-export const SUPPORT_EMAIL = "Support@cloudbird.in";
+export const SUPPORT_EMAIL = "info@cloudbirdindia.com";
 
 export const COMPANY_NAME = "Cloud Bird India";
 

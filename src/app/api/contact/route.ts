@@ -9,8 +9,8 @@ export const dynamic = "force-dynamic";
 const TO = process.env.CONTACT_TO_EMAIL || SUPPORT_EMAIL;
 
 /**
- * Must be an address on a domain verified in Resend. Until cloudbird.in is
- * verified, Resend's shared `onboarding@resend.dev` works but only delivers
+ * Must be an address on a domain verified in Resend. Until cloudbirdindia.com
+ * is verified, Resend's shared `onboarding@resend.dev` works but only delivers
  * to the Resend account owner.
  */
 const FROM = process.env.CONTACT_FROM_EMAIL || "Cloud Bird India <onboarding@resend.dev>";

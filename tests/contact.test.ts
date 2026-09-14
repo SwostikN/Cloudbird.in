@@ -66,7 +66,7 @@ describe("formatEnquiry", () => {
 describe("buildEnquiryMailto", () => {
   it("prefills a draft to the support inbox", () => {
     const url = buildEnquiryMailto(valid);
-    expect(url.startsWith("mailto:Support@cloudbird.in?subject=")).toBe(true);
+    expect(url.startsWith("mailto:info@cloudbirdindia.com?subject=")).toBe(true);
     const body = decodeURIComponent(new URL(url).searchParams.get("body") ?? "");
     expect(body).toContain("We need SAP HANA support.");
   });

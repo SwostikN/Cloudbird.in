@@ -31,11 +31,11 @@ directly, because their address is set as the reply-to.
 Three environment variables drive it. Copy `.env.example` to `.env.local` for
 development, and set the same three on the host:
 
-| Variable             | Purpose                                              |
-| -------------------- | ---------------------------------------------------- |
-| `RESEND_API_KEY`     | From <https://resend.com/api-keys>                    |
-| `CONTACT_TO_EMAIL`   | Where enquiries land. Defaults to Support@cloudbird.in |
-| `CONTACT_FROM_EMAIL` | Who they come from. Must be a Resend-verified domain  |
+| Variable             | Purpose                                                   |
+| -------------------- | --------------------------------------------------------- |
+| `RESEND_API_KEY`     | From <https://resend.com/api-keys>                        |
+| `CONTACT_TO_EMAIL`   | Where enquiries land. Defaults to info@cloudbirdindia.com |
+| `CONTACT_FROM_EMAIL` | Who they come from. Must be a Resend-verified domain      |
 
 **One-time setup.** The sending domain registered in Resend is
 `cloudbirdindia.com`. Publish the three DNS records that
@@ -43,10 +43,10 @@ development, and set the same three on the host:
 `resend._domainkey`, and an `MX` plus `TXT` on the `send` subdomain — then press
 Verify. Nothing sends until all three go green.
 
-Note the two domains are different on purpose. Mail is sent from
-`cloudbirdindia.com` and delivered to `Support@cloudbird.in`, which is a
-Microsoft 365 inbox. Resend puts its SPF record on a `send` subdomain, so
-adding it never disturbs the mail already running on the main domain.
+Mail is sent from `cloudbirdindia.com` and delivered to
+`info@cloudbirdindia.com` on the same domain. Resend puts its SPF record on a
+`send` subdomain, so adding it never disturbs the inbox's existing mail records
+on the main domain.
 
 Before the domain verifies you can set `CONTACT_FROM_EMAIL` to
 `Cloud Bird India <onboarding@resend.dev>`. That works immediately but only
