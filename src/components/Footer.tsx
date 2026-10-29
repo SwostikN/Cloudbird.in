@@ -77,6 +77,12 @@ export default function Footer() {
             © {year} {COMPANY_NAME}. {t("ft_rights")}
           </span>
           <span>{t("ft_made")}</span>
+          <span>
+            Website by{" "}
+            <a className="ft-credit" href="https://swostikn.com.np" target="_blank" rel="noopener">
+              Swostik Nepal
+            </a>
+          </span>
         </div>
       </div>
     </footer>

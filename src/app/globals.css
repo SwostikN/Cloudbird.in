@@ -166,6 +166,8 @@ a.cust:hover .ext{opacity:1}
 .ft h4{color:#fff;font:600 15px var(--head);margin:0 0 16px}
 .ft a{color:#b9c9db;display:block;padding:6px 0}
 .ft a:hover{color:#fff}
+.ft .ft-credit{display:inline;padding:0;color:inherit;text-decoration:underline;text-underline-offset:2px}
+.ft .ft-credit:hover{color:#fff}
 .ft .fbrand img{height:52px;width:auto;background:#fff;padding:7px 10px;border-radius:10px;margin-bottom:14px}
 .ft .fdesc{color:#93a6bb;font-size:14px;max-width:290px}
 .ft .fsoc{display:flex;gap:10px;margin-top:16px}
